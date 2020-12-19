@@ -1,14 +1,20 @@
 package main
 
 import (
-	"go-gin/src/classes"
+	. "go-gin/src/Middleware"
+	. "go-gin/src/classes"
 	"go-gin/src/goft"
 )
 
 func main() {
-	goft.Start().Mount(
-		"v1",
-		classes.NewIndexClass(),
-		classes.NewUserClass(),
-	).Launch()
+	//fmt.Println(*goft.InitConfig().Server)
+	//fmt.Println(*goft.InitConfig().Config)
+	//return
+	goft.Start().Beans(goft.NewGormAdapter()).
+		Attach(NewUserMiddleware()).
+		Mount(
+			"v1",
+			NewIndexClass(),
+			NewUserClass(),
+		).Launch()
 }
