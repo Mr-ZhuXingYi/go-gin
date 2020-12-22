@@ -1,6 +1,9 @@
 package goft
 
-import "sync"
+import (
+	"github.com/robfig/cron/v3"
+	"sync"
+)
 
 func init() {
 	c := GetTaskChan()
@@ -18,6 +21,15 @@ func doTask(t *TaskExector) {
 		}()
 		t.Exec()
 	}()
+}
+
+var onceCron sync.Once
+var taskCron *cron.Cron //定时任务
+func getCronTask() *cron.Cron {
+	onceCron.Do(func() {
+		taskCron = cron.New(cron.WithSeconds())
+	})
+	return taskCron
 }
 
 var TaskChan chan *TaskExector
