@@ -16,5 +16,6 @@ func main() {
 			"v1",
 			NewIndexClass(),
 			NewUserClass(),
+			NewArticle(),
 		).Launch()
 }

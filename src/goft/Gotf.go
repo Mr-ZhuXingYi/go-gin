@@ -3,6 +3,7 @@ package goft
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"log"
 )
 
 type Goft struct {
@@ -23,6 +24,7 @@ func (this *Goft) Launch() *Goft {
 	if config := this.beanFactory.GetBean(new(SysConfig)); config != nil {
 		port = config.(*SysConfig).Server.Port
 	}
+	getCronTask().Start()
 	this.Run(fmt.Sprintf(":%d", port))
 	return this
 }
@@ -59,6 +61,15 @@ func (this *Goft) Mount(group string, iCalss ...IClass) *Goft {
 	for _, build := range iCalss {
 		build.Build(this)
 		this.beanFactory.inject(build)
+	}
+	return this
+}
+
+//0/3 * * * * *  //增加定时任务
+func (this *Goft) Task(expr string, f func()) *Goft {
+	_, err := getCronTask().AddFunc(expr, f)
+	if err != nil {
+		log.Println(err)
 	}
 	return this
 }
